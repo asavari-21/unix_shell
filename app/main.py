@@ -48,6 +48,7 @@ def main():
         parts = shlex.split(cmd_input)
 
         out_file = None
+        err_file = None
 
         if ">" in parts:
             i = parts.index(">")
@@ -58,27 +59,55 @@ def main():
             i = parts.index("1>")
             out_file = parts[i+1]
             parts = parts[:i]
+        
+        elif "2>" in parts:
+            i = parts.index("2>")
+            err_file = parts[i+1]
+            parts = parts[:i]
 
         cmd = parts[0]
         args = parts[1:]
 
         func = builtin.get(cmd)
+
         if func:
-            if out_file:
-                full_path = find_execute(cmd)
-                with open(out_file, "w") as f:
-                    subprocess.run([cmd] + args, executable=full_path, stdout=f)
-            else:
+            old_out = sys.stdout
+            old_err = sys.stderr
+
+            try:
+                if out_file:
+                    sys.stdout = open(out_file, "w")
+                if err_file:
+                    sys.stderr = open(err_file, "w")
+
                 func(args)
+
+            finally:
+                sys.stdout.close() if out_file else None
+                sys.stderr.close() if err_file else None
+                sys.stdout = old_out
+                sys.stderr = old_err
+
         else:
             full_path = find_execute(cmd)
+
             if full_path:
                 try:
+                    out_tar = None
+                    err_tar = None
+
                     if out_file:
-                        with open(out_file, "w") as f:
-                            subprocess.run([cmd] + args, executable=full_path, stdout=f)
-                    else:
-                        subprocess.run([cmd] + args, executable=full_path)
+                        out_tar = open(out_file, "w")
+                    if err_file:
+                        err_tar = open(err_file, "w")
+                    
+                    subprocess.run([cmd] + args, executable=full_path, stdout=out_tar, stderr=err_tar)
+
+                    if out_tar: 
+                        out_tar.close()
+                    if err_tar:
+                        err_tar.close()
+
                 except Exception as e:
                     print(f"Error executing {cmd}: {e}")
             else:
