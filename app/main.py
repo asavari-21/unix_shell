@@ -46,17 +46,39 @@ def main():
             continue
 
         parts = shlex.split(cmd_input)
+
+        out_file = None
+
+        if ">" in parts:
+            i = parts.index(">")
+            out_file = parts[i+1]
+            parts = parts[:i]
+
+        elif "1>" in parts:
+            i = parts.index("1>")
+            out_file = parts[i+1]
+            parts = parts[:i]
+
         cmd = parts[0]
         args = parts[1:]
 
         func = builtin.get(cmd)
         if func:
-            func(args)
+            if out_file:
+                full_path = find_execute(cmd)
+                with open(out_file, "w") as f:
+                    subprocess.run([cmd] + args, executable=full_path, stdout=f)
+            else:
+                func(args)
         else:
             full_path = find_execute(cmd)
             if full_path:
                 try:
-                    subprocess.run([cmd] + args, executable=full_path)
+                    if out_file:
+                        with open(out_file, "w") as f:
+                            subprocess.run([cmd] + args, executable=full_path, stdout=f)
+                    else:
+                        subprocess.run([cmd] + args, executable=full_path)
                 except Exception as e:
                     print(f"Error executing {cmd}: {e}")
             else:
