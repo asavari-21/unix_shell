@@ -15,7 +15,7 @@ def main():
             print()
         elif command.split()[0] == "type":
             if command.split()[1] in ["echo", "exit", "type"]:
-                print(f"{command.split()[1]} is a shell bulletin.")
+                print(f"{command.split()[1]} is a shell builtin.")
             else:
                 for i in range (1, len(command.split())):
                     print(command.split()[i], end = " ")
