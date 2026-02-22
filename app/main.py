@@ -17,9 +17,7 @@ def main():
             if command.split()[1] in ["echo", "exit", "type"]:
                 print(f"{command.split()[1]} is a shell builtin")
             else:
-                for i in range (1, len(command.split())):
-                    print(command.split()[i], end = " ")
-                print(":command not found")                                      
+                print(f"{command.split()[1]}: not found")                                      
         else:
             print(f"{command}: command not found") 
 
