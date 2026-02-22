@@ -1,6 +1,7 @@
 import os
 import sys
 import subprocess
+import shlex
 
 def cmd_exit(args: any):
     sys.exit()
@@ -45,7 +46,7 @@ def main():
             continue
 
         cmd = cmd_input.split()[0]
-        args = cmd_input.split()[1:]
+        args = shlex.split(cmd_input)[1:]
 
         func = builtin.get(cmd)
         if func:
