@@ -45,8 +45,9 @@ def main():
         if not cmd_input:
             continue
 
-        cmd = cmd_input.split()[0]
-        args = shlex.split(cmd_input)[1:]
+        parts = shlex.split(cmd_input)
+        cmd = parts[0]
+        args = parts[1:]
 
         func = builtin.get(cmd)
         if func:
