@@ -19,7 +19,7 @@ def main():
             else:
                 for i in range (1, len(command.split())):
                     print(command.split()[i], end = " ")
-                print("command not found")                                      
+                print(":command not found")                                      
         else:
             print(f"{command}: command not found") 
 
