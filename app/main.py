@@ -54,7 +54,7 @@ def main():
             full_path = find_execute(cmd)
             if full_path:
                 try:
-                    subprocess.run([full_path] + args)
+                    subprocess.run([cmd] + args, executable=full_path)
                 except Exception as e:
                     print(f"Error executing {cmd}: {e}")
             else:
