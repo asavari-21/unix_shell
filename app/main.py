@@ -57,7 +57,7 @@ def main():
                 app_out_file = parts[i+1]
                 parts = parts[:i]
 
-            elif "1?>" in parts:
+            elif "1>>" in parts:
                 i = parts.index("1>>")
                 app_out_file = parts[i+1]
                 parts = parts[:i]
