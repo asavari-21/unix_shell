@@ -2,6 +2,7 @@ import os
 import sys
 import subprocess
 import shlex
+import readline
 
 def cmd_exit(args: any):
     sys.exit()
@@ -36,8 +37,19 @@ def find_execute(cmd):
         
     return None
 
+def auto_complete(text, state):
+    match = [cmd for cmd in builtin if cmd.startswith(text)]
+
+    if state < len(match):
+        return match[state] + " "
+    
+    return None
+
 
 builtin = {"echo": cmd_echo, "exit": cmd_exit, "type": cmd_type}
+
+readline.set_completer(auto_complete)
+readline.parse_and_bind("tab: complete")
 
 def main():
     while True:
