@@ -37,13 +37,32 @@ def find_execute(cmd):
         
     return None
 
-def auto_complete(text, state):
-    match = [cmd for cmd in builtin if cmd.startswith(text)]
+def auto_complete(text, state):    
+    execs = get_path_execs()
+
+    all_cmds = set(builtin) | execs
+
+    match = sorted(cmd for cmd in all_cmds if cmd.startswith(text))
 
     if state < len(match):
         return match[state] + " "
     
     return None
+
+def get_path_execs():
+    execs = set()
+    path_env = os.environ.get("PATH", "")
+
+    for dir in path_env.split(os.pathsep):
+        if not os.path.isdir(dir):
+            continue
+
+        for file in os.listdir(dir):
+            full_path = os.path.join(dir, file)
+            if os.path.isfile(full_path) and os.access(full_path, os.X_OK):
+                execs.add(file)
+
+    return execs
 
 
 builtin = {"echo": cmd_echo, "exit": cmd_exit, "type": cmd_type}
