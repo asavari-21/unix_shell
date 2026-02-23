@@ -50,6 +50,7 @@ def main():
         out_file = None
         err_file = None
         app_out_file = None
+        app_err_file = None
 
         while True:
             if ">>" in parts:
@@ -60,6 +61,11 @@ def main():
             elif "1>>" in parts:
                 i = parts.index("1>>")
                 app_out_file = parts[i+1]
+                parts = parts[:i]
+
+            elif "2>>" in parts:
+                i = parts.index("2>>")
+                app_err_file = parts[i+1]
                 parts = parts[:i]
             
             elif ">" in parts:
@@ -95,7 +101,9 @@ def main():
                 elif out_file:
                     sys.stdout = open(out_file, "w")
 
-                if err_file:
+                if app_err_file:
+                    sys.stderr = open(app_err_file, "a")
+                elif err_file:
                     sys.stderr = open(err_file, "w")                
 
                 func(args)
@@ -122,6 +130,8 @@ def main():
                     elif out_file:
                         out_tar = open(out_file, "w")
                     
+                    if app_err_file:
+                        err_tar = open(app_err_file, "a")
                     if err_file:
                         err_tar = open(err_file, "w")                   
                     
