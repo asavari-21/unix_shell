@@ -51,25 +51,34 @@ def main():
         err_file = None
         app_out_file = None
 
-        if ">" in parts:
-            i = parts.index(">")
-            out_file = parts[i+1]
-            parts = parts[:i]
+        while True:
+            if ">>" in parts:
+                i = parts.index(">>")
+                app_out_file = parts[i+1]
+                parts = parts[:i]
 
-        elif "1>" in parts:
-            i = parts.index("1>")
-            out_file = parts[i+1]
-            parts = parts[:i]
-        
-        elif "2>" in parts:
-            i = parts.index("2>")
-            err_file = parts[i+1]
-            parts = parts[:i]
+            elif "1?>" in parts:
+                i = parts.index("1>>")
+                app_out_file = parts[i+1]
+                parts = parts[:i]
+            
+            elif ">" in parts:
+                i = parts.index(">")
+                out_file = parts[i+1]
+                parts = parts[:i]
 
-        elif ">>" in parts:
-            i = parts.index(">>")
-            app_out_file = parts[i+1]
-            parts = parts[:i]
+            elif "1>" in parts:
+                i = parts.index("1>")
+                out_file = parts[i+1]
+                parts = parts[:i]
+
+            elif "2>" in parts:
+                i = parts.index("2>")
+                err_file = parts[i+1]
+                parts = parts[:i]
+            
+            else:
+                break
 
         cmd = parts[0]
         args = parts[1:]
@@ -81,19 +90,21 @@ def main():
             old_err = sys.stderr
 
             try:
-                if out_file:
-                    sys.stdout = open(out_file, "w")
-                if err_file:
-                    sys.stderr = open(err_file, "w")
                 if app_out_file:
                     sys.stdout = open(app_out_file, "a")
+                elif out_file:
+                    sys.stdout = open(out_file, "w")
+
+                if err_file:
+                    sys.stderr = open(err_file, "w")                
 
                 func(args)
 
             finally:
-                sys.stdout.close() if out_file else None
-                sys.stdout.close() if app_out_file else None
-                sys.stderr.close() if err_file else None
+                if sys.stdout is not old_out:
+                    sys.stdout.close()
+                if sys.stderr is not old_err:
+                    sys.stderr.close()
                 
                 sys.stdout = old_out
                 sys.stderr = old_err
@@ -105,14 +116,14 @@ def main():
                 try:
                     out_tar = None
                     err_tar = None
-                    app_out_tar = None
 
-                    if out_file:
-                        out_tar = open(out_file, "w")
-                    if err_file:
-                        err_tar = open(err_file, "w")
                     if app_out_file:
                         app_out_tar = open(app_out_file, "a")
+                    elif out_file:
+                        out_tar = open(out_file, "w")
+                    
+                    if err_file:
+                        err_tar = open(err_file, "w")                   
                     
                     subprocess.run([cmd] + args, executable=full_path, stdout=out_tar, stderr=err_tar)
 
@@ -120,8 +131,6 @@ def main():
                         out_tar.close()
                     if err_tar:
                         err_tar.close()
-                    if app_out_tar:
-                        app_out_tar.close()
 
                 except Exception as e:
                     print(f"Error executing {cmd}: {e}")
