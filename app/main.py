@@ -118,7 +118,7 @@ def main():
                     err_tar = None
 
                     if app_out_file:
-                        app_out_tar = open(app_out_file, "a")
+                        out_tar = open(app_out_file, "a")
                     elif out_file:
                         out_tar = open(out_file, "w")
                     
