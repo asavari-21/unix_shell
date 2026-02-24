@@ -78,6 +78,11 @@ def run_pipe(cmd_input):
     right_builtin = builtin.get(right_cmd)
 
     try:
+        # builtin | builtin
+        if left_builtin and right_builtin:
+            right_builtin(right_parts[1:])
+            return
+        
         # builtin | external cmd
         if left_builtin and not right_builtin:
             old_stdout = sys.stdout
