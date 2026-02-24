@@ -3,6 +3,7 @@ import sys
 import subprocess
 import shlex
 import readline
+from io import StringIO
 
 def cmd_exit(args: any):
     sys.exit()
@@ -70,22 +71,65 @@ def run_pipe(cmd_input):
     left_parts = shlex.split(left.strip())
     right_parts = shlex.split(right.strip())
 
-    left_exec = find_execute(left_parts[0])
-    right_exec = find_execute(right_parts[0])
+    left_cmd = left_parts[0]
+    right_cmd = right_parts[0]
 
-    if not left_exec:
-        print(f"{left_parts[0]}: command not found")
-        return
-    
-    if not right_exec:
-        print(f"{right_parts[0]}: command not found")
-        return
-    
+    left_builtin = builtin.get(left_cmd)
+    right_builtin = builtin.get(right_cmd)
+
     try:
+        # builtin | external cmd
+        if left_builtin and not right_builtin:
+            old_stdout = sys.stdout
+            buffer = StringIO()
+
+            sys.stdout = buffer
+            left_builtin(left_parts[1:])
+            sys.stdout = old_stdout
+
+            data = buffer.getvalue().encode()
+
+            right_exec = find_execute(right_cmd)
+            if not right_exec:
+                print(f"{right_exec}: command not found")
+                return
+            
+            subprocess.run([right_cmd] + right_parts[1:], executable=right_exec, input=data)
+
+            return
+        
+        # external cmd | builtin
+        if right_builtin and not left_builtin:
+
+            left_exec = find_execute(left_cmd)
+            
+            if not left_exec:
+                print(f"{left_exec}: command not found")
+                return
+            
+            subprocess.run([left_cmd] + left_parts[1:], executable=right_exec, stdout=subprocess.DEVNULL)
+
+            right_builtin(right_parts[1:])
+
+            return
+        
+        # external | external
+        left_exec = find_execute(left_cmd)
+        right_exec = find_execute(right_cmd)
+
+        if not left_exec:
+            print(f"{left_parts[0]}: command not found")
+            return
+        
+        if not right_exec:
+            print(f"{right_parts[0]}: command not found")
+            return
+        
         p1 = subprocess.Popen([left_parts[0]] + left_parts[1:], executable=left_exec, stdout=subprocess.PIPE)
         p2 = subprocess.Popen([right_parts[0]] + right_parts[1:], executable=right_exec, stdin=p1.stdout)
 
         p1.stdout.close()
+
         p2.wait()
         p1.wait()
 
