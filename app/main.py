@@ -64,6 +64,28 @@ def get_path_execs():
 
     return execs
 
+def run_pipe(cmd_input):
+    left, right = cmd_input.split("|", 1)
+
+    left_parts = shlex.split(left.strip())
+    right_parts = shlex.split(right.strip())
+
+    left_exec = find_execute(left_parts[0])
+    right_exec = find_execute(right_parts[0])
+
+    if not left_exec:
+        print(f"{left_parts[0]}: command not found")
+        return
+    
+    if not right_exec:
+        print(f"{right_parts[0]}: command not found")
+        return
+    
+    p1 = subprocess.Popen([left_parts[0]] + left_parts[1:], executable=left_exec, stdout=subprocess.PIPE)
+    p2 = subprocess.Popen([right_parts[0]] + right_parts[1:], executable=right_exec, stdout=p1.stdout)
+
+    p1.stdout.close()
+    p2.wait()
 
 builtin = {"echo": cmd_echo, "exit": cmd_exit, "type": cmd_type}
 
@@ -74,6 +96,10 @@ def main():
     while True:
         cmd_input = input("$ ").strip()
         if not cmd_input:
+            continue
+
+        if "|" in cmd_input:
+            run_pipe(cmd_input)
             continue
 
         parts = shlex.split(cmd_input)
