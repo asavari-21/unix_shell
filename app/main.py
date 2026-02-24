@@ -83,7 +83,7 @@ def run_pipe(cmd_input):
     
     try:
         p1 = subprocess.Popen([left_parts[0]] + left_parts[1:], executable=left_exec, stdout=subprocess.PIPE)
-        p2 = subprocess.Popen([right_parts[0]] + right_parts[1:], executable=right_exec, stdout=p1.stdout)
+        p2 = subprocess.Popen([right_parts[0]] + right_parts[1:], executable=right_exec, stdin=p1.stdout)
 
         p1.stdout.close()
         p2.wait()
