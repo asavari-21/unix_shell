@@ -81,11 +81,15 @@ def run_pipe(cmd_input):
         print(f"{right_parts[0]}: command not found")
         return
     
-    p1 = subprocess.Popen([left_parts[0]] + left_parts[1:], executable=left_exec, stdout=subprocess.PIPE)
-    p2 = subprocess.Popen([right_parts[0]] + right_parts[1:], executable=right_exec, stdout=p1.stdout)
+    try:
+        p1 = subprocess.Popen([left_parts[0]] + left_parts[1:], executable=left_exec, stdout=subprocess.PIPE)
+        p2 = subprocess.Popen([right_parts[0]] + right_parts[1:], executable=right_exec, stdout=p1.stdout)
 
-    p1.stdout.close()
-    p2.wait()
+        p1.stdout.close()
+        p2.wait()
+
+    except Exception as e:
+        print("Pipeline error:", e)
 
 builtin = {"echo": cmd_echo, "exit": cmd_exit, "type": cmd_type}
 
