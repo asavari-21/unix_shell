@@ -87,6 +87,7 @@ def run_pipe(cmd_input):
 
         p1.stdout.close()
         p2.wait()
+        p1.wait()
 
     except Exception as e:
         print("Pipeline error:", e)
