@@ -112,7 +112,7 @@ def run_pipe(cmd_input):
                 print(f"{left_exec}: command not found")
                 return
             
-            subprocess.run([left_cmd] + left_parts[1:], executable=right_exec, stdout=subprocess.DEVNULL)
+            subprocess.run([left_cmd] + left_parts[1:], executable=left_exec, stdout=subprocess.DEVNULL)
 
             right_builtin(right_parts[1:])
 
