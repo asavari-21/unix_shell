@@ -66,77 +66,83 @@ def get_path_execs():
     return execs
 
 def run_pipe(cmd_input):
-    left, right = cmd_input.split("|", 1)
+    cmds = [shlex.split(cmd.strip) for cmd in cmd_input.split("|")]
 
-    left_parts = shlex.split(left.strip())
-    right_parts = shlex.split(right.strip())
+    processes = []
+    prev_stdout = None
 
-    left_cmd = left_parts[0]
-    right_cmd = right_parts[0]
-
-    left_builtin = builtin.get(left_cmd)
-    right_builtin = builtin.get(right_cmd)
 
     try:
-        # builtin | builtin
-        if left_builtin and right_builtin:
-            right_builtin(right_parts[1:])
-            return
-        
-        # builtin | external cmd
-        if left_builtin and not right_builtin:
-            old_stdout = sys.stdout
-            buffer = StringIO()
+        for i, parts in enumerate(cmds):
+            cmd_name = parts[0]
+            args = parts[1:]
 
-            sys.stdout = buffer
-            left_builtin(left_parts[1:])
-            sys.stdout = old_stdout
+            func = builtin.get(cmd_name)
 
-            data = buffer.getvalue().encode()
+            if func:
 
-            right_exec = find_execute(right_cmd)
-            if not right_exec:
-                print(f"{right_exec}: command not found")
+                if i != len(cmds) - 1:
+                    old_stdout = sys.stdout
+                    buffer = StringIO()
+
+                    sys.stdout = buffer
+                    func(args)
+                    sys.stdout = old_stdout
+
+                    prev_stdout = buffer.getvalue().encode()
+
+                else:
+                    func(args)
+
+                continue
+
+            exec_path = find_execute(cmd_name)
+
+            if not exec_path:
+                print(f"{cmd_name}: command not found")
                 return
             
-            subprocess.run([right_cmd] + right_parts[1:], executable=right_exec, input=data)
+            if i == 0:
 
-            return
-        
-        # external cmd | builtin
-        if right_builtin and not left_builtin:
+                p = subprocess.Popen([cmd_name] + args, executable=exec_path, stdout=subprocess.PIPE)
 
-            left_exec = find_execute(left_cmd)
-            
-            if not left_exec:
-                print(f"{left_exec}: command not found")
-                return
-            
-            subprocess.run([left_cmd] + left_parts[1:], executable=left_exec, stdout=subprocess.DEVNULL)
+                prev_stdout = p.stdout
+                processes.append(p)
 
-            right_builtin(right_parts[1:])
+            elif i < len(cmds) - 1:
 
-            return
-        
-        # external | external
-        left_exec = find_execute(left_cmd)
-        right_exec = find_execute(right_cmd)
+                if isinstance(prev_stdout, bytes):
 
-        if not left_exec:
-            print(f"{left_parts[0]}: command not found")
-            return
-        
-        if not right_exec:
-            print(f"{right_parts[0]}: command not found")
-            return
-        
-        p1 = subprocess.Popen([left_parts[0]] + left_parts[1:], executable=left_exec, stdout=subprocess.PIPE)
-        p2 = subprocess.Popen([right_parts[0]] + right_parts[1:], executable=right_exec, stdin=p1.stdout)
+                    p = subprocess.Popen([cmd_name] + args, executable=exec_path, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
 
-        p1.stdout.close()
+                    p.stdin.write(prev_stdout)
+                    p.stdin.close()
 
-        p2.wait()
-        p1.wait()
+                else:
+
+                    p = subprocess.Popen([cmd_name] + args, executable=exec_path, stdin=prev_stdout, stdout=subprocess.PIPE)
+
+                    prev_stdout.close()
+
+                prev_stdout = p.stdout
+                processes.append(p)
+
+            else:
+
+                if isinstance(prev_stdout, bytes):
+
+                    subprocess.run([cmd_name] + args, executable=exec_path, input=prev_stdout)
+
+                else:
+                     
+                    p = subprocess.Popen([cmd_name] + args, executable=exec_path, stdin=prev_stdout)
+
+                    prev_stdout.close()
+                    p.wait()
+                    processes.append(p)
+
+        for p in processes:
+            p.wait()
 
     except Exception as e:
         print("Pipeline error:", e)
