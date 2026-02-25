@@ -66,7 +66,7 @@ def get_path_execs():
     return execs
 
 def run_pipe(cmd_input):
-    cmds = [shlex.split(cmd.strip) for cmd in cmd_input.split("|")]
+    cmds = [shlex.split(cmd.strip()) for cmd in cmd_input.split("|")]
 
     processes = []
     prev_stdout = None
