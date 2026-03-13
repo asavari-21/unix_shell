@@ -150,25 +150,39 @@ def run_pipe(cmd_input):
 history = []
 
 def cmd_hist(args):
+
     if args and args[0] == "-r":
 
         if len(args) < 2:
             return
         
         path = args[1]
+
         try:
             with open(path) as f:
                 for line in f:
                     cmd = line.strip()
                     if cmd:
                         history.append(cmd)
+                
         except FileNotFoundError:
             print(f"history: {path}: no such file")
-
+        
         return
 
-    for i, cmd in enumerate(history, 1):
-        print(f"{    i:5} {cmd}")    
+    if args:
+        try:
+            n = int(args[0])
+        except ValueError:
+            print(f"history: invalid argument")
+        return
+    else:
+        n = len(history)
+
+    start = max(0, len(history) - n)
+
+    for i, cmd in range(start, len(history)):
+        print(f"{    i+1:5} {history[i]}") 
 
 builtin = {"echo": cmd_echo, "exit": cmd_exit, "type": cmd_type, "history": cmd_hist}
 
