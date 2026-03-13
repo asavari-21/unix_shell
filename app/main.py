@@ -149,6 +149,21 @@ def run_pipe(cmd_input):
 
 history = []
 last_written = 0
+histfile = os.environ.get("HISTFILE")
+
+if histfile:
+    try:
+        with open(histfile) as f:
+            for line in f:
+                cmd = line.strip()
+                if cmd:
+                    history.append(cmd)
+
+        last_written = len(history)
+        
+    except FileNotFoundError:
+        pass
+
 
 def cmd_hist(args):
 
