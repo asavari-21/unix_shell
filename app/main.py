@@ -180,6 +180,8 @@ def cmd_hist(args):
                 f.write(cmd + "\n")       
         return
     
+    global last_written
+    
     if args and args[0] == "-a":
         if len(args) < 2:
             return
