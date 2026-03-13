@@ -160,7 +160,12 @@ readline.parse_and_bind("tab: complete")
 
 def main():
     while True:
-        cmd_input = input("$ ").strip()
+        cmd_input = input("$ ")
+
+        history.append(cmd_input)
+
+        cmd_input = cmd_input.strip()
+        
         if not cmd_input:
             continue
 
