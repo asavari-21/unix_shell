@@ -148,6 +148,7 @@ def run_pipe(cmd_input):
         print("Pipeline error:", e)
 
 history = []
+last_written = 0
 
 def cmd_hist(args):
 
@@ -186,7 +187,10 @@ def cmd_hist(args):
         path = args[1]
 
         with open(path, "a") as f:
-            f.write(history[-1] + "\n")
+            for cmd in history[last_written:]:
+                f.write(cmd + "\n")
+        
+        last_written = len(history)
         return
         
 
