@@ -165,6 +165,18 @@ def cmd_hist(args):
         except FileNotFoundError:
             print(f"history: {path}: no such file")        
         return
+    
+    if args and args[0] == "-w":
+        if len(args) < 2:
+            return
+        
+        path = args[1]
+
+        with open(path, "w") as f:
+            for cmd in history:
+                f.write(cmd + "\n")
+        
+        return
 
     if args:
         try:
