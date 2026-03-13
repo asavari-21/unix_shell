@@ -160,10 +160,9 @@ if histfile:
                     history.append(cmd)
 
         last_written = len(history)
-        
+
     except FileNotFoundError:
         pass
-
 
 def cmd_hist(args):
 
