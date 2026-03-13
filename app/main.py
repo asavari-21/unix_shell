@@ -6,6 +6,16 @@ import readline
 from io import StringIO
 
 def cmd_exit(args: any):
+    histfile = os.environ.get("HISTFILE")
+
+    if histfile:
+        try:
+            with open(histfile, "w") as f:
+                for cmd in history:
+                    f.write(cmd + "\n")
+        except FileNotFoundError:
+            pass
+        
     sys.exit()
 
 def cmd_echo(args: str):
