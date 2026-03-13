@@ -147,7 +147,10 @@ def run_pipe(cmd_input):
     except Exception as e:
         print("Pipeline error:", e)
 
-builtin = {"echo": cmd_echo, "exit": cmd_exit, "type": cmd_type}
+def cmd_hist(cmd):
+    pass
+
+builtin = {"echo": cmd_echo, "exit": cmd_exit, "type": cmd_type, "history": cmd_hist}
 
 readline.set_completer(auto_complete)
 readline.parse_and_bind("tab: complete")
