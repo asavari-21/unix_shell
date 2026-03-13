@@ -159,7 +159,7 @@ def cmd_hist(args):
     else:
         n = len(history)
     
-    start = max(0, len(history) - n - 1)
+    start = max(0, len(history) - n)
 
     for i in range(start, len(history)):
         print(f"{    i+1:5} {history[i]}")    
