@@ -153,9 +153,6 @@ def cmd_hist(args):
 
     if args and args[0] == "-r":
 
-        if len(args) < 2:
-            return
-        
         path = args[1]
 
         try:
@@ -166,8 +163,7 @@ def cmd_hist(args):
                         history.append(cmd)
                 
         except FileNotFoundError:
-            print(f"history: {path}: no such file")
-        
+            print(f"history: {path}: no such file")        
         return
 
     if args:
@@ -175,7 +171,7 @@ def cmd_hist(args):
             n = int(args[0])
         except ValueError:
             print(f"history: invalid argument")
-        return
+            return
     else:
         n = len(history)
 
