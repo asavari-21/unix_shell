@@ -38,10 +38,10 @@ def cmd_cd(args):
     try:
         os.chdir(path)
     except FileNotFoundError:
-        print(f"cd: {path}: no such file or directory")
+        print(f"cd: {path}: No such file or directory")
     except NotADirectoryError:
-        print(f"cd: {path}: not a directory")
-        
+        print(f"cd: {path}: Not a directory")
+
 def cmd_type(args: str):
     if not args:
         print("type: missing argument")
