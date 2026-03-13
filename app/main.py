@@ -186,8 +186,7 @@ def cmd_hist(args):
         path = args[1]
 
         with open(path, "a") as f:
-            for cmd in history:
-                f.write(cmd + "\n")
+            f.write(history[-1] + "\n")
         return
         
 
