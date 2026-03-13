@@ -181,7 +181,7 @@ def cmd_hist(args):
 
     start = max(0, len(history) - n)
 
-    for i, cmd in range(start, len(history)):
+    for i in range(start, len(history)):
         print(f"{    i+1:5} {history[i]}") 
 
 builtin = {"echo": cmd_echo, "exit": cmd_exit, "type": cmd_type, "history": cmd_hist}
