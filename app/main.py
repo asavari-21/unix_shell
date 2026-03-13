@@ -147,28 +147,24 @@ def run_pipe(cmd_input):
     except Exception as e:
         print("Pipeline error:", e)
 
+history = []
+
 def cmd_hist(args: any):
-    for cmd in history:
-        print(cmd)    
+    for i, cmd in enumerate(history, 1):
+        print(f"{i:5} {cmd}")    
 
 builtin = {"echo": cmd_echo, "exit": cmd_exit, "type": cmd_type, "history": cmd_hist}
-
-history = []
 
 readline.set_completer(auto_complete)
 readline.parse_and_bind("tab: complete")
 
 def main():
     while True:
-        cmd_input = input("$ ")
+        cmd_input = input("$ ").strip()
 
-        history.append(cmd_input)
-
-        cmd_input = cmd_input.strip()
-        
         if not cmd_input:
             continue
-
+            
         history.append(cmd_input)
 
         if "|" in cmd_input:
