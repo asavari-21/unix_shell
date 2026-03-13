@@ -152,7 +152,9 @@ history = []
 def cmd_hist(args):
 
     if args and args[0] == "-r":
-
+        if len(args) < 2:
+            return
+        
         path = args[1]
 
         try:
@@ -174,9 +176,20 @@ def cmd_hist(args):
 
         with open(path, "w") as f:
             for cmd in history:
-                f.write(cmd + "\n")
-        
+                f.write(cmd + "\n")       
         return
+    
+    if args and args[0] == "-a":
+        if len(args) < 2:
+            return
+        
+        path = args[1]
+
+        with open(path, "a") as f:
+            for cmd in history:
+                f.write(cmd + "\n")
+        return
+        
 
     if args:
         try:
