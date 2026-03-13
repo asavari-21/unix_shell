@@ -14,13 +14,34 @@ def cmd_exit(args: any):
                 for cmd in history:
                     f.write(cmd + "\n")
         except FileNotFoundError:
-            pass
-        
+            pass        
     sys.exit()
 
 def cmd_echo(args: str):
     print(" ".join(args))
 
+def cmd_pwd(args):
+    print(os.getcwd())
+
+def cmd_cd(args):
+
+    if not args:
+        path = os.path.expanduser("~")
+    else:
+        path = args[0]
+
+        if path == "~":
+            path = os.path.expanduser("~")
+        else:
+            path = os.path.expanduser(path)
+        
+    try:
+        os.chdir(path)
+    except FileNotFoundError:
+        print(f"cd: {path}: no such file or directory")
+    except NotADirectoryError:
+        print(f"cd: {path}: not a directory")
+        
 def cmd_type(args: str):
     if not args:
         print("type: missing argument")
@@ -234,7 +255,7 @@ def cmd_hist(args):
     for i in range(start, len(history)):
         print(f"{    i+1:5} {history[i]}") 
 
-builtin = {"echo": cmd_echo, "exit": cmd_exit, "type": cmd_type, "history": cmd_hist}
+builtin = {"echo": cmd_echo, "exit": cmd_exit, "type": cmd_type, "history": cmd_hist, "pwd": cmd_pwd, "cd": cmd_cd} 
 
 readline.set_completer(auto_complete)
 readline.parse_and_bind("tab: complete")
