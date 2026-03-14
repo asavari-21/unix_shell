@@ -72,9 +72,9 @@ def find_execute(cmd):
 def auto_complete(text, state):
 
     buffer = readline.get_line_buffer()
-    tokens = buffer.split()
+    begidx = readline.get_begidx()
 
-    if len(tokens) <= 1 and not buffer.endswith(" "):
+    if begidx == 0:
         cmds = set(builtin.keys()) | get_path_execs()
         matches = sorted(cmd for cmd in cmds if cmd.startswith(text))
 
@@ -83,10 +83,10 @@ def auto_complete(text, state):
         return None
     
     if "/" in text:
-        dir, part = os.path.split(text)
-        search_dir = dir if dir else "."
+        dirname, part = os.path.split(text)
+        search_dir = dirname if dirname else "."
     else:
-        dir = ""
+        dirname = ""
         part = text
         search_dir = "."
 
@@ -102,8 +102,8 @@ def auto_complete(text, state):
     
     match = matches[state]
 
-    if dir:
-        path = os.path.join(dir, match)
+    if dirname:
+        path = os.path.join(dirname, match)
     else:
         path = match
 
