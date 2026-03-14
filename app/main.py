@@ -79,7 +79,7 @@ def auto_complete(text, state):
         matches = sorted(cmd for cmd in cmds if cmd.startswith(text))
 
         if state < len(matches):
-            return matches[state]    
+            return matches[state] + " " 
         return None
     
     if "/" in text:
@@ -91,7 +91,7 @@ def auto_complete(text, state):
         search_dir = "."
 
     try:
-        entries = os.listir(search_dir)
+        entries = os.listdir(search_dir)
     except FileNotFoundError:
         return None
     
