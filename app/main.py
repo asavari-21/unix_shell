@@ -5,8 +5,7 @@ import shlex
 import readline
 from io import StringIO
 
-import sys
-print(f"DEBUG: sys.path is {sys.path}", file=sys.stderr)
+#print(f"DEBUG: sys.path is {sys.path}", file=sys.stderr)
 
 def cmd_exit(args: any):
     histfile = os.environ.get("HISTFILE")
