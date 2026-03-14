@@ -7,5 +7,6 @@
 # Learn more: https://codecrafters.io/program-interface
 
 set -e # Exit on failure
+cd "$(dirname "$0")/.."
 
 exec uv run --quiet -m app.main "$@"
