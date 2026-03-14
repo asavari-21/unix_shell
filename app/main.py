@@ -72,49 +72,57 @@ def find_execute(cmd):
     return None
 
 def auto_complete(text, state):
+    execs = get_path_execs()
+    all_cmds = set(builtin) | execs
+    match = sorted(cmd for cmd in all_cmds if cmd.startswith(text))
+    if state < len(match):
+        return match[state] + " " 
+    return None
 
-    buffer = readline.get_line_buffer()
-    begidx = readline.get_begidx()
-    #tokens = buffer[:readline.get_begidx()].split()
+# def auto_complete(text, state):
 
-    #if len(tokens) == 0:
-    if begidx == 0:
-        cmds = set(builtin.keys()) | get_path_execs()
-        matches = sorted(cmd for cmd in cmds if cmd.startswith(text))
+#     buffer = readline.get_line_buffer()
+#     begidx = readline.get_begidx()
+#     #tokens = buffer[:readline.get_begidx()].split()
 
-        if state < len(matches):
-            return matches[state] + " " 
-        return None
+#     #if len(tokens) == 0:
+#     if begidx == 0:
+#         cmds = set(builtin.keys()) | get_path_execs()
+#         matches = sorted(cmd for cmd in cmds if cmd.startswith(text))
+
+#         if state < len(matches):
+#             return matches[state] + " " 
+#         return None
     
-    if "/" in text:
-        dirname, part = os.path.split(text)
-        search_dir = dirname if dirname else "."
-    else:
-        dirname = ""
-        part = text
-        search_dir = "."
+#     if "/" in text:
+#         dirname, part = os.path.split(text)
+#         search_dir = dirname if dirname else "."
+#     else:
+#         dirname = ""
+#         part = text
+#         search_dir = "."
 
-    try:
-        entries = os.listdir(search_dir)
-    except FileNotFoundError:
-        return None
+#     try:
+#         entries = os.listdir(search_dir)
+#     except FileNotFoundError:
+#         return None
     
-    matches = sorted(e for e in entries if e.startswith(part))
+#     matches = sorted(e for e in entries if e.startswith(part))
 
-    if state >= len(matches):
-        return None
+#     if state >= len(matches):
+#         return None
     
-    match = matches[state]
+#     match = matches[state]
 
-    if dirname:
-        path = os.path.join(dirname, match)
-    else:
-        path = match
+#     if dirname:
+#         path = os.path.join(dirname, match)
+#     else:
+#         path = match
 
-    if os.path.isdir(os.path.join(search_dir, match)):
-        return path + "/"
-    else:
-        return path
+#     if os.path.isdir(os.path.join(search_dir, match)):
+#         return path + "/"
+#     else:
+#         return path
 
 def get_path_execs():
     execs = set()
