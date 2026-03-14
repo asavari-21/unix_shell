@@ -69,17 +69,48 @@ def find_execute(cmd):
         
     return None
 
-def auto_complete(text, state):    
-    execs = get_path_execs()
+def auto_complete(text, state):
 
-    all_cmds = set(builtin) | execs
+    buffer = readline.get_line_buffer()
+    tokens = buffer.split()
 
-    match = sorted(cmd for cmd in all_cmds if cmd.startswith(text))
+    if len(tokens) <= 1 and not buffer.endswith(" "):
+        cmds = set(builtin.keys()) | get_path_execs()
+        matches = sorted(cmd for cmd in cmds if cmd.startswith(text))
 
-    if state < len(match):
-        return match[state] + " "
+        if state < len(matches):
+            return matches[state] + " "    
+        return None
     
-    return None
+    if "/" in text:
+        dir, part = os.path.split(text)
+        search_dir = dir if dir else "."
+    else:
+        dir = ""
+        part = text
+        search_dir = "."
+
+    try:
+        entries = os.listir(search_dir)
+    except FileNotFoundError:
+        return None
+    
+    matches = sorted(e for e in entries if e.startswith(part))
+
+    if state >= len(matches):
+        return None
+    
+    match = matches[state]
+
+    if dir:
+        path = os.path.join(dir, match)
+    else:
+        path = match
+
+    if os.path.isdir(os.path.join(search_dir, match)):
+        return path + "/"
+    else:
+        return path + " "
 
 def get_path_execs():
     execs = set()
