@@ -7,8 +7,5 @@
 # Learn more: https://codecrafters.io/program-interface
 
 set -e # Exit on failure
-ROOT_DIR=$(cd "$(dirname "$0")/.." && pwd)
-
-export PYTHONPATH="$ROOT_DIR:$PYTHONPATH"
 
 exec uv run --quiet -m app.main "$@"

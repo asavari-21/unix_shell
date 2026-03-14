@@ -6,9 +6,10 @@
 #
 # Learn more: https://codecrafters.io/program-interface
 
-set -e # Exit on failure
-ROOT_DIR=$(cd "$(dirname "$0")/.." && pwd)
+set -e # Exit early if any commands fail
 
-export PYTHONPATH="$ROOT_DIR:$PYTHONPATH"
-
+# Copied from .codecrafters/run.sh
+#
+# - Edit this to change how your program runs locally
+# - Edit .codecrafters/run.sh to change how your program runs remotely
 exec uv run --quiet -m app.main "$@"
