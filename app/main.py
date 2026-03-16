@@ -307,9 +307,9 @@ builtin = {"echo": cmd_echo, "exit": cmd_exit, "type": cmd_type, "history": cmd_
 
 def main():
     while True:
-        cmd_input = input("$ ").strip()
+        cmd_input = input("$ ")
 
-        if not cmd_input:
+        if not cmd_input.strip():
             continue
             
         history.append(cmd_input)
