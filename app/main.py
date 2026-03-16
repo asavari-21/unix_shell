@@ -5,6 +5,9 @@ import shlex
 import readline
 from io import StringIO
 
+readline.parse_and_bind("bind ^I rl_complete")
+readline.set_completer_delims(" \t\n")
+
 #print(f"DEBUG: sys.path is {sys.path}", file=sys.stderr)
 
 def cmd_exit(args: any):
@@ -123,6 +126,8 @@ def auto_complete(text, state):
         return path + "/"
     else:
         return path + " "
+
+readline.set_completer(auto_complete)
 
 def get_path_execs():
     execs = set()
@@ -299,10 +304,6 @@ def cmd_hist(args):
         print(f"{    i+1:5} {history[i]}") 
 
 builtin = {"echo": cmd_echo, "exit": cmd_exit, "type": cmd_type, "history": cmd_hist, "pwd": cmd_pwd, "cd": cmd_cd} 
-
-readline.set_completer(auto_complete)
-readline.parse_and_bind("bind ^I rl_complete")
-readline.set_completer_delims(" \t\n")
 
 def main():
     while True:
