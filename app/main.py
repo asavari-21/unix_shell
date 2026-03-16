@@ -5,9 +5,6 @@ import shlex
 import readline
 from io import StringIO
 
-readline.parse_and_bind("bind ^I rl_complete")
-readline.set_completer_delims(" \t\n")
-
 #print(f"DEBUG: sys.path is {sys.path}", file=sys.stderr)
 
 def cmd_exit(args: any):
@@ -99,7 +96,7 @@ def auto_complete(text, state):
     
     if "/" in text:
         dirname, part = os.path.split(text)
-        search_dir = dirname if dirname else "."
+        search_dir = os.path.expanduser(dirname) if dirname else "."
     else:
         dirname = ""
         part = text
@@ -107,7 +104,7 @@ def auto_complete(text, state):
 
     try:
         entries = os.listdir(search_dir)
-    except FileNotFoundError:
+    except Exception:
         return None
     
     matches = sorted(e for e in entries if e.startswith(part))
@@ -117,17 +114,21 @@ def auto_complete(text, state):
     
     match = matches[state]
 
+    full_match_path = os.path.join(search_dir, match)
+
     if dirname:
         completion = os.path.join(dirname, match)
     else:
         completion = match
 
-    if os.path.isdir(os.path.join(search_dir, match)):
+    if os.path.isdir(full_match_path):
         return completion + "/"
     else:
         return completion + " "
 
 readline.set_completer(auto_complete)
+readline.parse_and_bind("tab: complete")
+#readline.set_completer_delims(" \t\n")
 
 def get_path_execs():
     execs = set()
