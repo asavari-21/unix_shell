@@ -126,12 +126,10 @@ def auto_complete(text, state):
     else:
         completion = match
     
-    suffix = completion[len(text):]
-
     if os.path.isdir(full_match_path):
-        return suffix + "/"
+        return completion + "/"
     else:
-        return suffix + " "
+        return completion + " "
 
 readline.set_completer(auto_complete)
 
