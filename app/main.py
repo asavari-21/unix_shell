@@ -302,6 +302,7 @@ builtin = {"echo": cmd_echo, "exit": cmd_exit, "type": cmd_type, "history": cmd_
 
 readline.set_completer(auto_complete)
 readline.parse_and_bind("bind ^I rl_complete")
+readline.set_completer_delims(" \t\n")
 
 def main():
     while True:
