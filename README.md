@@ -1,2 +1,2 @@
-# unix-shell
+# unix_shell
 Custom Unix Shell (Python)
