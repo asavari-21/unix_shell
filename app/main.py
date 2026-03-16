@@ -118,14 +118,16 @@ def auto_complete(text, state):
     match = matches[state]
 
     if dirname:
-        path = os.path.join(dirname, match)
+        completion = os.path.join(dirname, match)
     else:
-        path = match
+        completion = match
+
+    suffix = completion[len(text):]
 
     if os.path.isdir(os.path.join(search_dir, match)):
-        return path + "/"
+        return suffix + "/"
     else:
-        return path + " "
+        return suffix + " "
 
 readline.set_completer(auto_complete)
 
