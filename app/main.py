@@ -123,11 +123,13 @@ def auto_complete(text, state):
         completion = os.path.join(dirname, match)
     else:
         completion = match
+    
+    suffix = completion[len(text):]
 
     if os.path.isdir(full_match_path):
-        return completion + "/"
+        return suffix + "/"
     else:
-        return completion + " "
+        return suffix + " "
 
 readline.set_completer(auto_complete)
 readline.parse_and_bind("tab: complete")
