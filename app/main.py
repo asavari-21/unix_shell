@@ -87,27 +87,42 @@ def auto_complete(text, state):
 
     #if len(tokens) == 0:
     if begidx == 0:
-        if state == 0:
-            cmds = set(builtin.keys()) | get_path_execs()
-            auto_complete.matches = sorted(cmd for cmd in cmds if cmd.startswith(text))
-    
-    else:
-        if state == 0:
-            dirname = os.path.dirname(text)
-            part = os.path.basename(text)
-            search_dir = dirname if dirname else "."
+        cmds = set(builtin.keys()) | get_path_execs()
+        matches = sorted(cmd for cmd in cmds if cmd.startswith(text))
 
-            try:
-                entries = os.listdir(search_dir)
-                auto_complete.matches = [os.path.join(dirname, e) for e in entries if e.startswith(part)]
-                auto_complete.matches = [m + "/" if os.path.isdir(m) else m for m in auto_complete.matches]
-            except Exception:
-                auto_complete.matches = []
-    
-    try:
-        return auto_complete.matches[state]
-    except (IndexError, AttributeError):
+        if state < len(matches):
+            return matches[state] + " " 
         return None
+    
+    if "/" in text:
+        dirname, part = os.path.split(text)
+        search_dir = dirname if dirname else "."
+    else:
+        dirname = ""
+        part = text
+        search_dir = "."
+
+    try:
+        entries = os.listdir(search_dir)
+    except FileNotFoundError:
+        return None
+    
+    matches = sorted(e for e in entries if e.startswith(part))
+
+    if state >= len(matches):
+        return None
+    
+    match = matches[state]
+
+    if dirname:
+        path = os.path.join(dirname, match)
+    else:
+        path = match
+
+    if os.path.isdir(os.path.join(search_dir, match)):
+        return path + "/"
+    else:
+        return path
 
 def get_path_execs():
     execs = set()
