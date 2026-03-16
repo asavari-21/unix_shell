@@ -83,6 +83,7 @@ def auto_complete(text, state):
 
     buffer = readline.get_line_buffer()
     begidx = readline.get_begidx()
+    endidx = readline.get_endidx()
     #tokens = buffer[:readline.get_begidx()].split()
 
     #if len(tokens) == 0:
@@ -94,12 +95,14 @@ def auto_complete(text, state):
             return matches[state] + " " 
         return None
     
-    if "/" in text:
-        dirname, part = os.path.split(text)
+    full_token = buffer[begidx:endidx]
+    
+    if "/" in full_token:
+        dirname, part = os.path.split(full_token)
         search_dir = os.path.expanduser(dirname) if dirname else "."
     else:
         dirname = ""
-        part = text
+        part = full_token
         search_dir = "."
 
     try:
