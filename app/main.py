@@ -3,6 +3,10 @@ import sys
 import subprocess
 import shlex
 import readline
+
+readline.set_completer_delims(" \t\n")
+readline.parse_and_bind("tab: complete")
+
 from io import StringIO
 
 #print(f"DEBUG: sys.path is {sys.path}", file=sys.stderr)
@@ -130,7 +134,6 @@ def auto_complete(text, state):
         return suffix + " "
 
 readline.set_completer(auto_complete)
-readline.parse_and_bind("tab: complete")
 
 def get_path_execs():
     execs = set()
@@ -310,9 +313,9 @@ builtin = {"echo": cmd_echo, "exit": cmd_exit, "type": cmd_type, "history": cmd_
 
 def main():
     while True:
-        cmd_input = input("$ ").strip()
+        cmd_input = input("$ ")
 
-        if not cmd_input:
+        if not cmd_input.strip():
             continue
             
         history.append(cmd_input)
