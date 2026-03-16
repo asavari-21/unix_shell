@@ -87,7 +87,7 @@ def auto_complete(text, state):
 
     if len(tokens) == 0:
     #if begidx == 0:
-        cmds = set(builtin.keys()) | get_path_execs()
+        cmds = set(builtin) | get_path_execs()
         matches = sorted(cmd for cmd in cmds if cmd.startswith(text))
 
         if state < len(matches):
