@@ -95,14 +95,12 @@ def auto_complete(text, state):
             return matches[state] + " " 
         return None
     
-    full_token = buffer[begidx:]
-    
-    if "/" in full_token:
-        dirname, part = os.path.split(full_token)
+    if "/" in text:
+        dirname, part = os.path.split(text)
         search_dir = os.path.expanduser(dirname) if dirname else "."
     else:
         dirname = ""
-        part = full_token
+        part = text
         search_dir = "."
 
     try:
