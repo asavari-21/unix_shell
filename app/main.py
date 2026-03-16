@@ -128,7 +128,6 @@ def auto_complete(text, state):
 
 readline.set_completer(auto_complete)
 readline.parse_and_bind("tab: complete")
-#readline.set_completer_delims(" \t\n")
 
 def get_path_execs():
     execs = set()
