@@ -82,11 +82,11 @@ def find_execute(cmd):
 def auto_complete(text, state):
 
     buffer = readline.get_line_buffer()
-    begidx = readline.get_begidx()
-    #tokens = buffer[:readline.get_begidx()].split()
+    #begidx = readline.get_begidx()
+    tokens = buffer[:readline.get_begidx()].split()
 
-    #if len(tokens) == 0:
-    if begidx == 0:
+    if len(tokens) == 0:
+    #if begidx == 0:
         cmds = set(builtin.keys()) | get_path_execs()
         matches = sorted(cmd for cmd in cmds if cmd.startswith(text))
 
