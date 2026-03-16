@@ -122,7 +122,7 @@ def auto_complete(text, state):
     if os.path.isdir(os.path.join(search_dir, match)):
         return path + "/"
     else:
-        return path
+        return path + " "
 
 def get_path_execs():
     execs = set()
